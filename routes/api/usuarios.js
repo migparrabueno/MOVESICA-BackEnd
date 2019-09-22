@@ -4,7 +4,6 @@ let usuariosModel = require('../../models/usuarios')
 const bcrypt = require('bcrypt');
 const jwt = require('jwt-simple');
 const moment = require('moment');
-const middlewares = require('../../middlewares')
 
 //Gestionamos api/usuarios/registro POST
 router.post('/registro', async(req,res)=>{
@@ -33,7 +32,7 @@ router.post('/login', async(req,res)=>{
 //PROFILE, api/usuario/profile POST
 router.post('/profile', async(req,res)=>{
     //Compruebo que existe la cabecera authentication donde va el token
-    if(!req.headers['authentication']){ //si no existe token devolvemos error
+    if(!req.headers['authentication']){ 
         console.log(req.headers)
         return res.json({error: 'No existe token. Haz login.'})
     }
@@ -43,14 +42,13 @@ router.post('/profile', async(req,res)=>{
     try{
         //Decodificar el token
         payload = jwt.decode(token, process.env.SECRET_KEY);
-    res.json(payload); //Me devuelve los datos decodificados: id, fecha creación y expiración.
-    } catch{ //gestionamos el error
+    res.json(payload); //Devuelve datos decodificados: id, fecha creación y expiración.
+    } catch{ 
         return res.json({error: 'Existe un error con el token. No es correcto.'})
     }
 })
 
 //Gestionamos la ruta api/estudiantes con un PUT. Esto es para editar un alumno.
-//Lo mismo que en la anterior, hay que hacer la petición en el postman para probar por ahora. Le pasamos el id y el resto de datos. 
 router.put('/edit/:userId', (req,res)=>{
     usuariosModel.update(req.params.userId, req.body)
     .then((result)=>{
@@ -79,12 +77,9 @@ const createToken = (pUser)=>{
         createdAt: moment().unix(),
         expiresAt: moment().add(1440, 'minutes').unix() //1 día
     }
-    console.log(payload);
-    //console.log(process.env.SECRET_KEY); //como lo hemos requerido en app.js, lo tenemos aquí también el dotenv. recordamos que hemos metido la clave en el fichero .env en la raiz del proyecto.
+    //console.log(payload);
     //primer parámetro: lo que vamos a encriptar, segundo: clave para desencriptar. 
-    return jwt.encode(payload, process.env.SECRET_KEY); //esto devuelve un token, el cual si le metemos la clave del segundo parámetro, nos devolverá la info de payload. Podemos encriptar lo que queramos. 
+    return jwt.encode(payload, process.env.SECRET_KEY); //Devuelve un token.
 }
 
-//router.use(middlewares.checkUserAuthentication)
-//aquí irá la parte que edita el usuario y dependerá de si está logado o no, por eso coloco aquí el middleware comentado para luego activarlo
 module.exports = router;

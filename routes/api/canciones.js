@@ -1,9 +1,7 @@
 let express = require('express');
 let router = express.Router();
 let cancionesModel = require('../../models/canciones')
-const bcrypt = require('bcrypt');
-const jwt = require('jwt-simple');
-const middlewares = require('../../middlewares')
+
 
 
 //Gestionamos api/canciones GET
